@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import string
 import time
 
-#data for US schools from: https://public.opendatasoft.com/explore/dataset/us-public-schools/table/?flg=en-us
+
 def load_list_from_csv(file_path, header_row=False):
     """Open CSV file and load contents into a list, skipping header row"""
     with open(file_path, mode="r", newline="") as file:
@@ -71,8 +71,8 @@ def generate_random_message(driver, word_limit):
     random_text_box = driver.find_element(By.ID, "randomtext_box")
     full_random_text = random_text_box.text
     
-    #Randomize length of output to between 50% and 100% of limit
-    word_cap = random.randint(int(word_limit/2), int(word_limit))
+    #Randomize length of output to between 25% and 100% of limit
+    word_cap = random.randint(int(word_limit/4), int(word_limit))
     all_random_words = full_random_text.split()
     capped_words = all_random_words[:word_cap]
     
@@ -85,12 +85,12 @@ def generate_random_message(driver, word_limit):
     return final_message
 
 
-
 def main():
-    """ """
-    print_logging = True
-    num_loops = 3
+    """Generate some random data and fill out a web form using it"""
+    print_logging = False
+    num_loops = 666
     success_count = 0
+    #US school data: https://public.opendatasoft.com/explore/dataset/us-public-schools/table/?flg=en-us
     schools = load_list_from_csv("us-schools.csv", True)
         
     for i in range(num_loops):        
@@ -103,12 +103,10 @@ def main():
         curr_email = generate_random_email()
         print("Random Email: " + curr_email) if print_logging else None
         
-        #Pick a random school and zip
-        curr_school, curr_zip = random.choice(schools)
+        curr_school, curr_zip = random.choice(schools) #Pick a random school and zip
         print("Random School: " + str(curr_school)) if print_logging else None
         print("Random Zip: " + str(curr_zip)) if print_logging else None
         
-
         try:
             # Go to target site
             driver.get("https://enddei.ed.gov/")
@@ -137,16 +135,11 @@ def main():
             
             # Wait for the results to load
             time.sleep(2)
-
-            # Print the title of the resulting page
             success_count += 1
             print("Messages successfully sent: " + str(success_count))
 
         finally:
-            # Close the browser
-            driver.quit()
-        
-    
+            driver.quit() #Close the browser
 #end main()
 
 if __name__ == "__main__":
